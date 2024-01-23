@@ -1,7 +1,5 @@
 package goin
 
-// search
-// * 二分查找
 func BinarySearch(nums []int, target int) int {
 	left, right := 0, len(nums)-1
 	for left <= right {
