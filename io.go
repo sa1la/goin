@@ -51,13 +51,16 @@ func NextRunes() []rune {
 	return []rune(NextString())
 }
 
+func unwrap[T any](value T, err error) T {
+	if err != nil {
+		panic(err)
+	}
+	return value
+}
+
 func NextInt() int {
 	s := NextString()
-	res, err := strconv.Atoi(s)
-	if err != nil {
-		panic(fmt.Errorf("NextInt: %w", err))
-	}
-	return res
+	return unwrap(strconv.Atoi(s))
 }
 
 // Next int slice
@@ -108,12 +111,7 @@ func NewIntSlice2D(n, m, def int) [][]int {
 	return newSlice
 }
 func NextFloat() float64 {
-	s := NextString()
-	res, err := strconv.ParseFloat(s, 64)
-	if err != nil {
-		panic(fmt.Errorf("NextFloat: %w", err))
-	}
-	return res
+	return unwrap(strconv.ParseFloat(NextString(), 64))
 }
 func NextFloats(n int) []float64 {
 	res := make([]float64, n)
