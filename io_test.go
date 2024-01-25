@@ -2,6 +2,7 @@ package goin
 
 import (
 	"bufio"
+	"fmt"
 	"reflect"
 	"strings"
 	"testing"
@@ -27,4 +28,11 @@ func TestNextStrings(t *testing.T) {
 	if !reflect.DeepEqual(res, expected) {
 		t.Errorf("expected %v, got %v", expected, res)
 	}
+}
+
+func ExampleNextString() {
+	sc = bufio.NewScanner(strings.NewReader("hello world"))
+	word := NextString()
+	fmt.Println(word)
+	// Output: hello world
 }
