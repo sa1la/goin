@@ -70,3 +70,10 @@ func Sum(s ...int) int {
 	}
 	return res
 }
+
+func Gcd(a, b int) int {
+	if b == 0 {
+		return Abs(a)
+	}
+	return Gcd(b, a%b)
+}
