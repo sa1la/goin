@@ -1,6 +1,7 @@
 package goin
 
 import (
+	"fmt"
 	"math"
 	"testing"
 )
@@ -31,6 +32,19 @@ func TestChMin(t *testing.T) {
 	if a != 2 {
 		t.Fail()
 	}
+}
+func ExampleChMax() {
+	a := 1
+	ChMax(&a, 2)
+	fmt.Println(a)
+	// Output: 2
+}
+
+func ExampleChMin() {
+	a := 3
+	ChMin(&a, 2)
+	fmt.Println(a)
+	// Output: 2
 }
 
 func TestAbs(t *testing.T) {
@@ -79,4 +93,39 @@ func TestGetAngle(t *testing.T) {
 			t.Errorf("getAngle(%v, %v) = %v, expected %v", tc.x, tc.y, result, tc.expected)
 		}
 	}
+}
+
+func TestCombo(t *testing.T) {
+	tests := []struct {
+		n      int
+		k      int
+		expect int
+	}{
+		{5, 3, 10},
+		{4, 2, 6},
+		{6, 0, 1},
+		{6, 1, 6},
+		{6, 6, 1},
+	}
+
+	for _, test := range tests {
+		result := Combo(test.n, test.k)
+		if result != test.expect {
+			t.Errorf("Combo(%d, %d) = %d; expect %d", test.n, test.k, result, test.expect)
+		}
+	}
+}
+
+func ExampleCombo() {
+	fmt.Println(Combo(5, 3))
+	fmt.Println(Combo(4, 2))
+	fmt.Println(Combo(6, 0))
+	fmt.Println(Combo(6, 1))
+	fmt.Println(Combo(6, 6))
+	// Output:
+	// 10
+	// 6
+	// 1
+	// 6
+	// 1
 }

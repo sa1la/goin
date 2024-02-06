@@ -53,6 +53,12 @@ func Abs(a int) int {
 	}
 	return a
 }
+
+// The Pow function is used to calculate the power of a to the power of n
+// a is the base and n is the exponent
+// It uses the method of fast exponentiation, with a time complexity of O(logn)
+// If a bit in the binary representation of n is 1, then we need to calculate the power of b for this bit
+// In each iteration, we square b itself to calculate the higher power of b
 func Pow(a, n int) int {
 	res := 1
 	b := a
@@ -73,6 +79,20 @@ func Sum(s ...int) int {
 	return res
 }
 
+// The GetAngle function calculates the angle (in degrees) between the positive x-axis and the point given by the coordinates (x, y).
+// It uses the Atan2 function from the math package to compute the arc tangent of y/x in radians and then converts it to degrees.
 func GetAngle(x, y float64) float64 {
 	return math.Atan2(y, x) * 180 / math.Pi
+}
+
+// The Combo function is used to calculate the combination number C(n, k)
+// n is the total number, k is the number of choices
+// If k is 0, return 1, indicating that there is only one situation without choice
+// Otherwise, the Combo function is called recursively, reducing the value of k each time until k is 0
+// Each recursion will multiply by (n - k + 1) / k, which is the calculation formula of the combination number
+func Combo(n int, k int) int {
+	if k == 0 {
+		return 1
+	}
+	return (n - k + 1) * Combo(n, k-1) / k
 }
