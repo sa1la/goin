@@ -1,5 +1,7 @@
 package goin
 
+import "math"
+
 // simple math functions for ordered
 type signed interface {
 	~int | ~int8 | ~int16 | ~int32 | ~int64
@@ -69,4 +71,8 @@ func Sum(s ...int) int {
 		res += v
 	}
 	return res
+}
+
+func GetAngle(x, y float64) float64 {
+	return math.Atan2(y, x) * 180 / math.Pi
 }
