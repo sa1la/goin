@@ -54,23 +54,25 @@ func Abs(a int) int {
 	return a
 }
 
-// The Pow function is used to calculate the power of a to the power of n
-// a is the base and n is the exponent
-// It uses the method of fast exponentiation, with a time complexity of O(logn)
-// If a bit in the binary representation of n is 1, then we need to calculate the power of b for this bit
-// In each iteration, we square b itself to calculate the higher power of b
-func Pow(a, n int) int {
+// The Pow function is used to calculate the power of x to the n
+// x is the base, n is the exponent
+// It uses the method of fast power to calculate, with a time complexity of O(logn)
+// If n is even, then x^n = (x^2)^(n/2)
+// If n is odd, then x^n = x * x^(n-1)
+// By continuously halving, the exponent n can be reduced to 0, at which point x^0 = 1
+// In the process of halving, if n is odd, an extra x needs to be multiplied
+func Pow(x, n int) int {
 	res := 1
-	b := a
 	for n > 0 {
-		if n&1 > 0 {
-			res *= b
+		if n&1 == 1 {
+			res *= x
 		}
+		x *= x
 		n >>= 1
-		b *= b
 	}
 	return res
 }
+
 func Sum(s ...int) int {
 	res := 0
 	for _, v := range s {
