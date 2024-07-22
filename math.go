@@ -98,3 +98,10 @@ func Combo(n int, k int) int {
 	}
 	return (n - k + 1) * Combo(n, k-1) / k
 }
+
+func Gcd(a, b int) int {
+	if b == 0 {
+		return Abs(a)
+	}
+	return Gcd(b, a%b)
+}

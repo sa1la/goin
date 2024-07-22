@@ -51,13 +51,16 @@ func NextRunes() []rune {
 	return []rune(NextString())
 }
 
+func unwrap[T any](value T, err error) T {
+	if err != nil {
+		panic(err)
+	}
+	return value
+}
+
 func NextInt() int {
 	s := NextString()
-	res, err := strconv.Atoi(s)
-	if err != nil {
-		panic(fmt.Errorf("NextInt: %w", err))
-	}
-	return res
+	return unwrap(strconv.Atoi(s))
 }
 
 // Next int slice
@@ -88,6 +91,7 @@ func Next2IntSlice(n int) ([]int, []int) {
 	}
 	return a, b
 }
+
 func NextIntSlice2D(n, m int) [][]int {
 	a := make([][]int, n)
 	for i := 0; i < n; i++ {
@@ -107,14 +111,11 @@ func NewIntSlice2D(n, m, def int) [][]int {
 	}
 	return newSlice
 }
+
 func NextFloat() float64 {
-	s := NextString()
-	res, err := strconv.ParseFloat(s, 64)
-	if err != nil {
-		panic(fmt.Errorf("NextFloat: %w", err))
-	}
-	return res
+	return unwrap(strconv.ParseFloat(NextString(), 64))
 }
+
 func NextFloats(n int) []float64 {
 	res := make([]float64, n)
 	for i := range res {
@@ -122,12 +123,15 @@ func NextFloats(n int) []float64 {
 	}
 	return res
 }
+
 func NextInt2() (int, int) {
 	return NextInt(), NextInt()
 }
+
 func NextInt3() (int, int, int) {
 	return NextInt(), NextInt(), NextInt()
 }
+
 func NextInt4() (int, int, int, int) {
 	return NextInt(), NextInt(), NextInt(), NextInt()
 }
@@ -141,12 +145,34 @@ func Print(a ...any) {
 func Printf(format string, a ...any) {
 	fmt.Fprintf(wr, format, a...)
 }
+
 func Println(a ...any) {
 	fmt.Fprintln(wr, a...)
 }
+
+func PrintSlice[T ordered](slices []T) {
+	for _, v := range slices {
+		Print(v, " ")
+	}
+}
+
+func PrintlnSlice[T ordered](slices []T) {
+	for _, v := range slices {
+		Println(v)
+	}
+}
+
+func PrintlnYes() {
+	Println("Yes")
+}
+func PrintlnNo() {
+	Println("No")
+}
+
 func Flush() {
 	wr.Flush()
 }
+
 func Debug(v ...interface{}) {
 	if !debugFlg {
 		return

@@ -129,3 +129,24 @@ func ExampleCombo() {
 	// 6
 	// 1
 }
+func TestGcd(t *testing.T) {
+	testCases := []struct {
+		a        int
+		b        int
+		expected int
+	}{
+		{10, 5, 5},
+		{14, 28, 14},
+		{18, 35, 1},
+		{40, 100, 20},
+		{-5, -15, 5},
+		{0, 0, 0},
+	}
+
+	for _, tc := range testCases {
+		result := Gcd(tc.a, tc.b)
+		if result != tc.expected {
+			t.Errorf("Gcd(%d, %d) = %d; expected %d", tc.a, tc.b, result, tc.expected)
+		}
+	}
+}
