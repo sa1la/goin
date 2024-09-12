@@ -1,29 +1,12 @@
 package goin
 
-import "math"
+import (
+	"math"
 
-// simple math functions for ordered
-type signed interface {
-	~int | ~int8 | ~int16 | ~int32 | ~int64
-}
+	"golang.org/x/exp/constraints"
+)
 
-type unsigned interface {
-	~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr
-}
-
-type integer interface {
-	signed | unsigned
-}
-
-type float interface {
-	~float32 | ~float64
-}
-
-type ordered interface {
-	integer | float | ~string
-}
-
-func Max[T ordered](as ...T) T {
+func Max[T constraints.Ordered](as ...T) T {
 	res := as[0]
 	for _, a := range as {
 		if res < a {
@@ -32,7 +15,7 @@ func Max[T ordered](as ...T) T {
 	}
 	return res
 }
-func Min[T ordered](as ...T) T {
+func Min[T constraints.Ordered](as ...T) T {
 	res := as[0]
 	for _, a := range as {
 		if res > a {

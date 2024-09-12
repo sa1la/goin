@@ -7,6 +7,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"golang.org/x/exp/constraints"
 )
 
 var (
@@ -150,13 +152,13 @@ func Println(a ...any) {
 	fmt.Fprintln(wr, a...)
 }
 
-func PrintSlice[T ordered](slices []T) {
+func PrintSlice[T constraints.Ordered](slices []T) {
 	for _, v := range slices {
 		Print(v, " ")
 	}
 }
 
-func PrintlnSlice[T ordered](slices []T) {
+func PrintlnSlice[T constraints.Ordered](slices []T) {
 	for _, v := range slices {
 		Println(v)
 	}
