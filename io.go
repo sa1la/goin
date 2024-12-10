@@ -164,11 +164,16 @@ func PrintlnSlice[T constraints.Ordered](slices []T) {
 	}
 }
 
-func PrintlnYes() {
-	Println("Yes")
-}
-func PrintlnNo() {
-	Println("No")
+// PrintlnSliceInline prints the elements of the provided slice inline, separated by spaces.
+// It accepts a slice of any type T that is ordered.
+func PrintlnSliceInline[T constraints.Ordered](slices []T) {
+	if len(slices) > 0 {
+		Print(fmt.Sprintf("%v", slices[0]))
+		for _, v := range slices[1:] {
+			Print(fmt.Sprintf(" %v", v))
+		}
+	}
+	Println()
 }
 
 func Flush() {
