@@ -1,12 +1,12 @@
-module github.com/sa1L-A/goin
+module github.com/sa1la/goin
 
 go 1.22.0
 
-toolchain go1.23.0
+toolchain go1.23.2
 
 require (
-	github.com/stretchr/testify v1.8.4
-	golang.org/x/exp v0.0.0-20240909161429-701f63a606c0
+	github.com/stretchr/testify v1.10.0
+	golang.org/x/exp v0.0.0-20241204233417-43b7b7cde48d
 )
 
 require (
