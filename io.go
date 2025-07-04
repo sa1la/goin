@@ -65,6 +65,18 @@ func NextInt() int {
 	return unwrap(strconv.Atoi(s))
 }
 
+// NextIntWithError reads the next integer and returns it along with any error
+func NextIntWithError() (int, error) {
+	s := NextString()
+	return strconv.Atoi(s)
+}
+
+// NextFloat64WithError reads the next float64 and returns it along with any error
+func NextFloat64WithError() (float64, error) {
+	s := NextString()
+	return strconv.ParseFloat(s, 64)
+}
+
 // Next int slice
 func NextIntSlice(n int) []int {
 	res := make([]int, n)

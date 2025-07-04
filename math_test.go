@@ -150,3 +150,151 @@ func TestGcd(t *testing.T) {
 		}
 	}
 }
+
+func TestLcm(t *testing.T) {
+	testCases := []struct {
+		a        int
+		b        int
+		expected int
+	}{
+		{4, 6, 12},
+		{15, 25, 75},
+		{7, 5, 35},
+		{0, 5, 0},
+		{12, 18, 36},
+	}
+
+	for _, tc := range testCases {
+		result := Lcm(tc.a, tc.b)
+		if result != tc.expected {
+			t.Errorf("Lcm(%d, %d) = %d; expected %d", tc.a, tc.b, result, tc.expected)
+		}
+	}
+}
+
+func TestIsPrime(t *testing.T) {
+	testCases := []struct {
+		n        int
+		expected bool
+	}{
+		{2, true},
+		{3, true},
+		{4, false},
+		{17, true},
+		{25, false},
+		{29, true},
+		{1, false},
+		{0, false},
+		{-5, false},
+	}
+
+	for _, tc := range testCases {
+		result := IsPrime(tc.n)
+		if result != tc.expected {
+			t.Errorf("IsPrime(%d) = %v; expected %v", tc.n, result, tc.expected)
+		}
+	}
+}
+
+func TestFactorial(t *testing.T) {
+	testCases := []struct {
+		n        int
+		expected int
+	}{
+		{0, 1},
+		{1, 1},
+		{5, 120},
+		{7, 5040},
+		{-1, 0},
+	}
+
+	for _, tc := range testCases {
+		result := Factorial(tc.n)
+		if result != tc.expected {
+			t.Errorf("Factorial(%d) = %d; expected %d", tc.n, result, tc.expected)
+		}
+	}
+}
+
+func TestModPow(t *testing.T) {
+	testCases := []struct {
+		base     int
+		exp      int
+		mod      int
+		expected int
+	}{
+		{2, 10, 1000, 24},
+		{3, 4, 5, 1},
+		{5, 3, 13, 8},
+		{2, 0, 5, 1},
+	}
+
+	for _, tc := range testCases {
+		result := ModPow(tc.base, tc.exp, tc.mod)
+		if result != tc.expected {
+			t.Errorf("ModPow(%d, %d, %d) = %d; expected %d", tc.base, tc.exp, tc.mod, result, tc.expected)
+		}
+	}
+}
+
+func TestFibonacci(t *testing.T) {
+	testCases := []struct {
+		n        int
+		expected int
+	}{
+		{0, 0},
+		{1, 1},
+		{2, 1},
+		{3, 2},
+		{10, 55},
+		{15, 610},
+	}
+
+	for _, tc := range testCases {
+		result := Fibonacci(tc.n)
+		if result != tc.expected {
+			t.Errorf("Fibonacci(%d) = %d; expected %d", tc.n, result, tc.expected)
+		}
+	}
+}
+
+func TestIsPowerOfTwo(t *testing.T) {
+	testCases := []struct {
+		n        int
+		expected bool
+	}{
+		{1, true},
+		{2, true},
+		{4, true},
+		{8, true},
+		{16, true},
+		{3, false},
+		{5, false},
+		{6, false},
+		{0, false},
+		{-4, false},
+	}
+
+	for _, tc := range testCases {
+		result := IsPowerOfTwo(tc.n)
+		if result != tc.expected {
+			t.Errorf("IsPowerOfTwo(%d) = %v; expected %v", tc.n, result, tc.expected)
+		}
+	}
+}
+
+func TestSieveOfEratosthenes(t *testing.T) {
+	result := SieveOfEratosthenes(30)
+	expected := []int{2, 3, 5, 7, 11, 13, 17, 19, 23, 29}
+	
+	if len(result) != len(expected) {
+		t.Errorf("SieveOfEratosthenes(30) length = %d; expected %d", len(result), len(expected))
+		return
+	}
+	
+	for i, prime := range expected {
+		if result[i] != prime {
+			t.Errorf("SieveOfEratosthenes(30)[%d] = %d; expected %d", i, result[i], prime)
+		}
+	}
+}
