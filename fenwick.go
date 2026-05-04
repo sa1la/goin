@@ -45,9 +45,7 @@ func NewFenwickTreeFromSlice[T Number](a []T) *FenwickTree[T] {
 // Update adds delta to the element at index i (0-indexed external API).
 // Panics if i < 0 or i >= n.
 func (f *FenwickTree[T]) Update(i int, delta T) {
-	if i < 0 || i >= f.n {
-		panic("FenwickTree: index out of bounds")
-	}
+	f.validate(i)
 	i++
 	for i <= f.n {
 		f.bit[i] += delta
@@ -58,9 +56,7 @@ func (f *FenwickTree[T]) Update(i int, delta T) {
 // Query returns the prefix sum a[0] + a[1] + ... + a[i].
 // 0-indexed external API. Panics if i < 0 or i >= n.
 func (f *FenwickTree[T]) Query(i int) T {
-	if i < 0 || i >= f.n {
-		panic("FenwickTree: index out of bounds")
-	}
+	f.validate(i)
 	var res T
 	i++
 	for i > 0 {
@@ -73,11 +69,20 @@ func (f *FenwickTree[T]) Query(i int) T {
 // RangeQuery returns the interval sum a[l] + ... + a[r].
 // Must have 0 <= l <= r < n, else panics.
 func (f *FenwickTree[T]) RangeQuery(l, r int) T {
-	if l < 0 || r >= f.n || l > r {
+	f.validate(l)
+	f.validate(r)
+	if l > r {
 		panic("FenwickTree: index out of bounds")
 	}
 	if l == 0 {
 		return f.Query(r)
 	}
 	return f.Query(r) - f.Query(l-1)
+}
+
+// validate panics if i is out of bounds.
+func (f *FenwickTree[T]) validate(i int) {
+	if i < 0 || i >= f.n {
+		panic("FenwickTree: index out of bounds")
+	}
 }

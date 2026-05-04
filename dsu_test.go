@@ -27,23 +27,18 @@ func TestUnionFindFind(t *testing.T) {
 func TestUnionFindUnion(t *testing.T) {
 	uf := NewUnionFind(5)
 
-	// Union two different sets
 	assert.True(t, uf.Union(0, 1))
 	assert.Equal(t, 4, uf.Count())
 
-	// Union same set again should return false
 	assert.False(t, uf.Union(0, 1))
 	assert.Equal(t, 4, uf.Count())
 
-	// Union another pair
 	assert.True(t, uf.Union(2, 3))
 	assert.Equal(t, 3, uf.Count())
 
-	// Chain union: connect {0,1} with {2,3}
 	assert.True(t, uf.Union(1, 2))
 	assert.Equal(t, 2, uf.Count())
 
-	// Union with isolated element
 	assert.True(t, uf.Union(0, 4))
 	assert.Equal(t, 1, uf.Count())
 }
@@ -51,7 +46,6 @@ func TestUnionFindUnion(t *testing.T) {
 func TestUnionFindIsConnected(t *testing.T) {
 	uf := NewUnionFind(5)
 
-	// Before any unions
 	assert.False(t, uf.IsConnected(0, 1))
 	assert.False(t, uf.IsConnected(2, 4))
 
@@ -81,7 +75,6 @@ func TestUnionFindSize(t *testing.T) {
 	assert.Equal(t, 3, uf.Size(1))
 	assert.Equal(t, 3, uf.Size(2))
 
-	// Isolated element
 	assert.Equal(t, 1, uf.Size(4))
 }
 
@@ -102,11 +95,9 @@ func TestUnionFindReset(t *testing.T) {
 }
 
 func TestUnionFindEdgeCases(t *testing.T) {
-	// n = 0
 	uf0 := NewUnionFind(0)
 	assert.Equal(t, 0, uf0.Count())
 
-	// n = 1, self-union returns false
 	uf1 := NewUnionFind(1)
 	assert.Equal(t, 1, uf1.Count())
 	assert.False(t, uf1.Union(0, 0))
@@ -129,28 +120,31 @@ func TestUnionFindPanic(t *testing.T) {
 	assert.Panics(t, func() { uf.Size(5) })
 }
 
-// bfsConnected checks if two nodes are connected using BFS on an adjacency list.
-func bfsConnected(adj [][]int, start, target int) bool {
-	if start == target {
-		return true
+// bfsComponents labels every node with its component id (the smallest node in the component).
+func bfsComponents(adj [][]int) []int {
+	n := len(adj)
+	comp := make([]int, n)
+	for i := range comp {
+		comp[i] = -1
 	}
-	visited := make([]bool, len(adj))
-	queue := []int{start}
-	visited[start] = true
-	for len(queue) > 0 {
-		u := queue[0]
-		queue = queue[1:]
-		for _, v := range adj[u] {
-			if v == target {
-				return true
-			}
-			if !visited[v] {
-				visited[v] = true
-				queue = append(queue, v)
+	q := NewQueue[int](16)
+	for start := 0; start < n; start++ {
+		if comp[start] != -1 {
+			continue
+		}
+		comp[start] = start
+		q.Enqueue(start)
+		for !q.IsEmpty() {
+			u := q.Dequeue()
+			for _, v := range adj[u] {
+				if comp[v] == -1 {
+					comp[v] = start
+					q.Enqueue(v)
+				}
 			}
 		}
 	}
-	return false
+	return comp
 }
 
 func TestUnionFindStress(t *testing.T) {
@@ -160,21 +154,19 @@ func TestUnionFindStress(t *testing.T) {
 
 	r := rand.New(rand.NewSource(42))
 
-	// Perform random unions
 	for i := 0; i < 2000; i++ {
 		a := r.Intn(n)
 		b := r.Intn(n)
-		merged := uf.Union(a, b)
-		if merged {
+		if uf.Union(a, b) {
 			adj[a] = append(adj[a], b)
 			adj[b] = append(adj[b], a)
 		}
 	}
 
-	// Verify connectivity for every pair
+	comp := bfsComponents(adj)
 	for i := 0; i < n; i++ {
 		for j := 0; j < n; j++ {
-			assert.Equal(t, bfsConnected(adj, i, j), uf.IsConnected(i, j),
+			assert.Equal(t, comp[i] == comp[j], uf.IsConnected(i, j),
 				"connectivity mismatch for pair (%d, %d)", i, j)
 		}
 	}

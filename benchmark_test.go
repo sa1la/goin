@@ -141,10 +141,9 @@ func BenchmarkCombo(b *testing.B) {
 }
 
 func BenchmarkUnionFindUnion(b *testing.B) {
+	uf := NewUnionFind(1000)
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-		uf := NewUnionFind(1000)
-		b.StartTimer()
 		uf.Union(i%1000, (i*7+13)%1000)
 	}
 }

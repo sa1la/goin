@@ -35,7 +35,6 @@ func (u *UnionFind) Find(x int) int {
 	for u.parent[root] != root {
 		root = u.parent[root]
 	}
-	// Compress path
 	for u.parent[x] != x {
 		parent := u.parent[x]
 		u.parent[x] = root
@@ -50,8 +49,6 @@ func (u *UnionFind) Find(x int) int {
 // Returns true if a merge happened, false if already in the same set.
 // Panics if x or y is out of bounds.
 func (u *UnionFind) Union(x, y int) bool {
-	u.validate(x)
-	u.validate(y)
 	rx := u.Find(x)
 	ry := u.Find(y)
 	if rx == ry {
@@ -76,7 +73,6 @@ func (u *UnionFind) IsConnected(x, y int) bool {
 // Size returns the size of the component containing x.
 // Panics if x is out of bounds.
 func (u *UnionFind) Size(x int) int {
-	u.validate(x)
 	return u.size[u.Find(x)]
 }
 
