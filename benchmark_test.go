@@ -139,3 +139,53 @@ func BenchmarkCombo(b *testing.B) {
 		Combo(20, 10)
 	}
 }
+
+func BenchmarkUnionFindUnion(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		uf := NewUnionFind(1000)
+		b.StartTimer()
+		uf.Union(i%1000, (i*7+13)%1000)
+	}
+}
+
+func BenchmarkUnionFindFind(b *testing.B) {
+	uf := NewUnionFind(1000)
+	for i := 0; i < 999; i++ {
+		uf.Union(i, i+1)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		uf.Find(i % 1000)
+	}
+}
+
+func BenchmarkFenwickTreeUpdate(b *testing.B) {
+	ft := NewFenwickTree[int](10000)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		ft.Update(i%10000, 1)
+	}
+}
+
+func BenchmarkFenwickTreeQuery(b *testing.B) {
+	ft := NewFenwickTree[int](10000)
+	for i := 0; i < 10000; i++ {
+		ft.Update(i, i)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		ft.Query(i % 10000)
+	}
+}
+
+func BenchmarkFenwickTreeFromSlice(b *testing.B) {
+	a := make([]int, 100000)
+	for i := range a {
+		a[i] = i
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		NewFenwickTreeFromSlice(a)
+	}
+}
