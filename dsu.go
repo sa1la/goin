@@ -1,15 +1,14 @@
 package goin
 
-// UnionFind implements the disjoint-set union (DSU) data structure
-// with path compression and union by size.
+// UnionFind 实现并查集（Disjoint Set Union），支持路径压缩和按大小合并。
 type UnionFind struct {
 	parent []int
 	size   []int
 	count  int
 }
 
-// NewUnionFind creates a new UnionFind with n elements (0..n-1).
-// Panics if n < 0. Returns an empty DSU when n == 0.
+// NewUnionFind 创建包含 n 个元素（0..n-1）的并查集。
+// n < 0 时 panic；n == 0 时返回空并查集。
 func NewUnionFind(n int) *UnionFind {
 	if n < 0 {
 		panic("UnionFind: n must be non-negative")
@@ -27,8 +26,8 @@ func NewUnionFind(n int) *UnionFind {
 	}
 }
 
-// Find returns the root of x with iterative path compression.
-// Panics if x is out of bounds.
+// Find 返回 x 所在集合的根节点，同时执行迭代路径压缩。
+// x 越界时 panic。
 func (u *UnionFind) Find(x int) int {
 	u.validate(x)
 	root := x
@@ -43,11 +42,9 @@ func (u *UnionFind) Find(x int) int {
 	return root
 }
 
-// Union merges the sets containing x and y.
-// Uses union by size (smaller attaches to larger).
-// If sizes are equal, y's root attaches to x's root.
-// Returns true if a merge happened, false if already in the same set.
-// Panics if x or y is out of bounds.
+// Union 合并 x 和 y 所在的集合，采用按大小合并（小集合挂到大集合）。
+// 若两元素已在同一集合则返回 false；合并成功返回 true。
+// x 或 y 越界时 panic。
 func (u *UnionFind) Union(x, y int) bool {
 	rx := u.Find(x)
 	ry := u.Find(y)
@@ -65,23 +62,23 @@ func (u *UnionFind) Union(x, y int) bool {
 	return true
 }
 
-// IsConnected returns true if x and y are in the same set.
+// IsConnected 判断 x 和 y 是否属于同一集合。
 func (u *UnionFind) IsConnected(x, y int) bool {
 	return u.Find(x) == u.Find(y)
 }
 
-// Size returns the size of the component containing x.
-// Panics if x is out of bounds.
+// Size 返回 x 所在连通分量的大小。
+// x 越界时 panic。
 func (u *UnionFind) Size(x int) int {
 	return u.size[u.Find(x)]
 }
 
-// Count returns the number of disjoint components.
+// Count 返回当前连通分量的数量。
 func (u *UnionFind) Count() int {
 	return u.count
 }
 
-// Reset restores the UnionFind to its initial state. O(n).
+// Reset 将并查集恢复为初始状态，时间复杂度 O(n)。
 func (u *UnionFind) Reset() {
 	for i := range u.parent {
 		u.parent[i] = i
@@ -90,7 +87,7 @@ func (u *UnionFind) Reset() {
 	u.count = len(u.parent)
 }
 
-// validate panics if x is out of bounds.
+// validate 检查 x 是否在合法范围内，否则 panic。
 func (u *UnionFind) validate(x int) {
 	if x < 0 || x >= len(u.parent) {
 		panic("UnionFind: index out of bounds")

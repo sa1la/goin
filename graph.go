@@ -6,17 +6,17 @@ import (
 	"sort"
 )
 
-// NegInf is a sentinel value used by Bellman-Ford to mark vertices
-// affected by a reachable negative cycle. It is math.MinInt64/4 rather
-// than MinInt64 itself so that adding/subtracting edge weights cannot
-// overflow int64 in a single operation.
+// NegInf 是 Bellman-Ford 中用于标记受可达负环影响的顶点的哨兵值。
+// 取 math.MinInt64/4 而非 MinInt64 本身，是为了避免在加减边权时发生 int64 溢出。
 const NegInf = math.MinInt64 / 4
 
+// Graph 是无权图，支持无向边和有向边。
 type Graph struct {
 	n   int
 	adj [][]int
 }
 
+// NewGraph 创建包含 n 个顶点（0..n-1）的空无权图。
 func NewGraph(n int) *Graph {
 	return &Graph{
 		n:   n,
@@ -24,6 +24,7 @@ func NewGraph(n int) *Graph {
 	}
 }
 
+// NewGraphFromAdj 从邻接表 adj 创建无权图。
 func NewGraphFromAdj(adj [][]int) *Graph {
 	return &Graph{
 		n:   len(adj),
@@ -31,19 +32,23 @@ func NewGraphFromAdj(adj [][]int) *Graph {
 	}
 }
 
+// N 返回图中的顶点数。
 func (g *Graph) N() int {
 	return g.n
 }
 
+// AddEdge 添加一条无向边 (u, v)。
 func (g *Graph) AddEdge(u, v int) {
 	g.adj[u] = append(g.adj[u], v)
 	g.adj[v] = append(g.adj[v], u)
 }
 
+// AddDirectedEdge 添加一条有向边 u → v。
 func (g *Graph) AddDirectedEdge(u, v int) {
 	g.adj[u] = append(g.adj[u], v)
 }
 
+// Adj 返回顶点 v 的邻接表；v 越界时返回 nil。
 func (g *Graph) Adj(v int) []int {
 	if v < 0 || v >= g.n {
 		return nil
@@ -51,16 +56,19 @@ func (g *Graph) Adj(v int) []int {
 	return g.adj[v]
 }
 
+// WEdge 是带权图中的一条边，To 为目标顶点，W 为边权。
 type WEdge struct {
 	To int
 	W  int
 }
 
+// WGraph 是带权图，支持无向边和有向边。
 type WGraph struct {
 	n   int
 	adj [][]WEdge
 }
 
+// NewWGraph 创建包含 n 个顶点（0..n-1）的空带权图。
 func NewWGraph(n int) *WGraph {
 	return &WGraph{
 		n:   n,
@@ -68,6 +76,7 @@ func NewWGraph(n int) *WGraph {
 	}
 }
 
+// NewWGraphFromAdj 从邻接表 adj 创建带权图。
 func NewWGraphFromAdj(adj [][]WEdge) *WGraph {
 	return &WGraph{
 		n:   len(adj),
@@ -75,19 +84,23 @@ func NewWGraphFromAdj(adj [][]WEdge) *WGraph {
 	}
 }
 
+// N 返回带权图中的顶点数。
 func (g *WGraph) N() int {
 	return g.n
 }
 
+// AddEdge 添加一条无向边 (u, v, w)。
 func (g *WGraph) AddEdge(u, v, w int) {
 	g.adj[u] = append(g.adj[u], WEdge{To: v, W: w})
 	g.adj[v] = append(g.adj[v], WEdge{To: u, W: w})
 }
 
+// AddDirectedEdge 添加一条有向边 u → v，权重为 w。
 func (g *WGraph) AddDirectedEdge(u, v, w int) {
 	g.adj[u] = append(g.adj[u], WEdge{To: v, W: w})
 }
 
+// Adj 返回顶点 v 的带权邻接表；v 越界时返回 nil。
 func (g *WGraph) Adj(v int) []WEdge {
 	if v < 0 || v >= g.n {
 		return nil
@@ -95,6 +108,8 @@ func (g *WGraph) Adj(v int) []WEdge {
 	return g.adj[v]
 }
 
+// BFS 从 start 出发进行无权图广度优先搜索，返回各顶点的最短距离。
+// 不可达顶点距离为 -1；start 越界时所有距离均为 -1。
 func (g *Graph) BFS(start int) []int {
 	dist := make([]int, g.n)
 	for i := range dist {
@@ -120,6 +135,8 @@ func (g *Graph) BFS(start int) []int {
 	return dist
 }
 
+// DFS 从 start 出发进行深度优先搜索，返回访问顺序。
+// start 越界时返回空切片。
 func (g *Graph) DFS(start int) []int {
 	visited := make([]bool, g.n)
 	order := make([]int, 0, g.n)
@@ -143,6 +160,8 @@ func (g *Graph) DFS(start int) []int {
 	return order
 }
 
+// IsBipartite 判断图是否为二分图。
+// 返回 (true, color) 表示是二分图，color 为每个顶点的 0/1 染色；否则返回 (false, color)。
 func (g *Graph) IsBipartite() (bool, []int) {
 	color := make([]int, g.n)
 	for i := range color {
@@ -173,6 +192,8 @@ func (g *Graph) IsBipartite() (bool, []int) {
 	return true, color
 }
 
+// TopologicalSort 对有向图进行拓扑排序。
+// 若图存在环则返回 (nil, false)；否则返回拓扑序和 true。
 func (g *Graph) TopologicalSort() ([]int, bool) {
 	indeg := make([]int, g.n)
 	for u := 0; u < g.n; u++ {
@@ -206,15 +227,14 @@ func (g *Graph) TopologicalSort() ([]int, bool) {
 	return order, true
 }
 
+// SCCResult 存储强连通分量分解的结果。
 type SCCResult struct {
-	Components [][]int // each inner slice is one SCC
-	Comp       []int   // Comp[v] = component ID of vertex v
+	Components [][]int // 每个内层切片是一个 SCC
+	Comp       []int   // Comp[v] 为顶点 v 所属的连通分量编号
 }
 
-// SCC finds strongly connected components using Kosaraju's algorithm.
-// First DFS records vertices in post-order; second DFS runs on the
-// reversed graph in reverse post-order. Each tree in the second DFS
-// is one SCC.
+// SCC 使用 Kosaraju 算法求强连通分量。
+// 第一次 DFS 记录后序，第二次在反向图上按逆后序执行 DFS；第二次 DFS 的每棵树即为一个 SCC。
 func (g *Graph) SCC() SCCResult {
 	visited := make([]bool, g.n)
 	order := make([]int, 0, g.n)
@@ -249,8 +269,7 @@ func (g *Graph) SCC() SCCResult {
 	}
 	components := make([][]int, 0)
 
-	// Reuse cur buffer across DFS calls to avoid O(k²) total copying
-	// when there are many small components.
+	// 复用 cur 缓冲区，避免大量小组件时总拷贝量达到 O(k²)。
 	cur := make([]int, 0, g.n)
 	var dfs2 func(int)
 	dfs2 = func(u int) {
@@ -278,6 +297,8 @@ func (g *Graph) SCC() SCCResult {
 	}
 }
 
+// TreeDiameter 返回无权树的直径（最长简单路径上的边数）。
+// 通过两次 BFS 实现。
 func (g *Graph) TreeDiameter() int {
 	if g.n == 0 {
 		return 0
@@ -301,6 +322,8 @@ func (g *Graph) TreeDiameter() int {
 	return maxDist
 }
 
+// BFS01 在边权仅为 0 或 1 的带权图上运行 0-1 BFS，返回从 start 出发的最短距离。
+// 不可达顶点距离为 -1；start 越界时所有距离均为 -1。
 func (g *WGraph) BFS01(start int) []int {
 	dist := make([]int, g.n)
 	for i := range dist {
@@ -311,9 +334,7 @@ func (g *WGraph) BFS01(start int) []int {
 	}
 
 	dist[start] = 0
-	// Preallocate a slice and use front/back indices as a deque.
-	// This avoids importing container/deque, which matters in CP
-	// where every import line counts against the source size limit.
+	// 预分配切片并用前后双指针模拟双端队列，避免引入 container/deque。
 	deque := make([]int, g.n*2)
 	front, back := g.n, g.n
 	deque[back] = start
@@ -340,10 +361,8 @@ func (g *WGraph) BFS01(start int) []int {
 	return dist
 }
 
-// dijkstraHeap is a local min-heap ordered by distance.
-// We use container/heap directly instead of the existing Heap[T]
-// because that type stores single values; Dijkstra needs
-// (distance, vertex) pairs ordered by distance.
+// dijkstraHeap 是 Dijkstra 使用的局部最小堆，按距离排序。
+// 直接使用 container/heap 而非现有的 Heap[T]，因为 Dijkstra 需要存储 (距离, 顶点) 二元组。
 type dijkstraItem struct {
 	dist int
 	v    int
@@ -367,6 +386,8 @@ func (h *dijkstraHeap) Pop() any {
 	return item
 }
 
+// Dijkstra 返回从 start 出发到各顶点的最短距离（非负权图），时间复杂度 O((V+E) log V)。
+// 不可达顶点距离为 -1；start 越界时所有距离均为 -1。
 func (g *WGraph) Dijkstra(start int) []int {
 	dist := make([]int, g.n)
 	for i := range dist {
@@ -398,13 +419,10 @@ func (g *WGraph) Dijkstra(start int) []int {
 	return dist
 }
 
-// BellmanFord returns shortest distances from start and a bool indicating
-// whether any negative cycle is reachable from start.
+// BellmanFord 返回从 start 出发的最短距离，以及一个 bool 表示 start 可达范围内是否不存在负环。
 //
-// An internal inf constant (not -1) is used during relaxation so that
-// a legitimate shortest-path distance of -1 is not confused with
-// "unreachable". After processing, unreachable vertices are translated
-// back to -1 in the returned slice.
+// 内部使用 inf（非 -1）进行松弛，避免将合法最短距离 -1 与"不可达"混淆。
+// 处理完成后，不可达顶点在结果中仍表示为 -1；受负环影响的顶点标记为 NegInf。
 func (g *WGraph) BellmanFord(start int) ([]int, bool) {
 	const inf = math.MaxInt64 / 4
 
@@ -485,6 +503,8 @@ func (g *WGraph) BellmanFord(start int) ([]int, bool) {
 	return result, !hasNegCycle
 }
 
+// FloydWarshall 在 g 上运行 Floyd-Warshall 全源最短路，返回距离矩阵。
+// 不可达点对值为 -1。
 func (g *WGraph) FloydWarshall() [][]int {
 	dist := make([][]int, g.n)
 	for i := 0; i < g.n; i++ {
@@ -511,7 +531,8 @@ func (g *WGraph) FloydWarshall() [][]int {
 	return FloydWarshall(dist)
 }
 
-// FloydWarshall computes all-pairs shortest paths in-place on the given distance matrix.
+// FloydWarshall 在传入的距离矩阵 dist 上原地运行 Floyd-Warshall 全源最短路。
+// dist[i][i] 应初始化为 0，不可达点对应初始化为一个足够大的哨兵值（如 -1）。返回 dist 本身。
 func FloydWarshall(dist [][]int) [][]int {
 	n := len(dist)
 	for k := 0; k < n; k++ {
@@ -532,9 +553,8 @@ func FloydWarshall(dist [][]int) [][]int {
 	return dist
 }
 
-// MSTKruskal returns the total weight and edges of a minimum spanning forest.
-// The e.To > u guard assumes the graph was built with AddEdge (undirected);
-// it keeps each undirected edge from being added twice.
+// MSTKruskal 使用 Kruskal 算法求最小生成森林，返回总权重和选中的边集。
+// e.To > u 的判定假设图通过 AddEdge（无向）构建，用于防止每条无向边被加入两次。
 func (g *WGraph) MSTKruskal() (int, []WEdge) {
 	type edge struct {
 		u, v int
@@ -568,6 +588,8 @@ func (g *WGraph) MSTKruskal() (int, []WEdge) {
 	return total, mstEdges
 }
 
+// TreeDiameter 返回带权树的直径（最长简单路径的权重和）。
+// 通过两次 Dijkstra 实现。
 func (g *WGraph) TreeDiameter() int {
 	if g.n == 0 {
 		return 0
